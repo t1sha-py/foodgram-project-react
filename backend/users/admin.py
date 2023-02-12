@@ -10,14 +10,9 @@ class UserAdmin(admin.ModelAdmin):
         'id',
         'email',
         'username',
-        'full_name',
     )
     list_filter = ('email', 'username',)
     search_fields = ('username',)
-
-    # @staticmethod
-    # def full_name(obj):
-    #     return f'{obj.first_name} {obj.last_name}'
 
 
 @admin.register(Follow)
