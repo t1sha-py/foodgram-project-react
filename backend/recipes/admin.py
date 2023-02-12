@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                     ShoppingList, Tag)
+                     ShoppingCart, Tag)
 
 
 @admin.register(Favorite)
@@ -58,8 +58,8 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorites.count()
 
 
-@admin.register(ShoppingList)
-class ShoppingListAdmin(admin.ModelAdmin):
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
     """Админка для управления списком покупок"""
     list_display = (
         'id',

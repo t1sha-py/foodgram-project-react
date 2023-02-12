@@ -3,7 +3,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingList, Tag)
+                            ShoppingCart, Tag)
 from users.models import Follow, User
 
 
@@ -99,7 +99,7 @@ class FollowSerializer(CustomUserSerializer):
     def get_recipes(self, obj):
         request = self.context.get('request')
         recipes = obj.recipes.all()
-        recipes_limit = request.query_params_get('recipes_limit')
+        recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit:
             recipes = recipes[:int(recipes_limit)]
 
@@ -112,7 +112,6 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-        read_only_fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -149,11 +148,11 @@ class RecipeListSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField(read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
-    is_in_shopping_list = serializers.SerializerMethodField(read_only=True)
+    is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        exclude = ('pub_date',)
 
     def get_ingredients(self, obj):
         queryset = IngredientAmount.objects.filter(recipe=obj)
@@ -167,12 +166,12 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
         return Favorite.objects.filter(user=request.user, recipe=obj).exists()
 
-    def get_is_in_shopping_list(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
 
-        return ShoppingList.objects.filter(
+        return ShoppingCart.objects.filter(
             user=request.user, recipe=obj
         ).exists()
 
@@ -257,12 +256,22 @@ class RecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
 
+    @staticmethod
+    def create_ingredients(ingredients, recipe):
+        for ingredient in ingredients:
+            IngredientAmount.objects.create(
+                recipe=recipe,
+                ingredient=ingredient.get('id'),
+                amount=ingredient.get('amount'),
+            )
+
     def create(self, validated_data):
-        author = self.context.get('request').user
+        # author = self.context.get('request').user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(author=author, **validated_data)
-        self.create_tags(tags, recipe)
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        # self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
 
         return recipe
@@ -313,11 +322,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
         ).data
 
 
-class ShoppingListSerializer(serializers.ModelSerializer):
+class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор для списка покупок"""
 
     class Meta:
-        model = ShoppingList
+        model = ShoppingCart
         fields = (
             'user',
             'recipe',

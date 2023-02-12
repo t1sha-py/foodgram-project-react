@@ -18,12 +18,12 @@ from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAuthorOrSuperUser
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingList, Tag)
+                            ShoppingCart, Tag)
 from users.models import Follow, User
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                          CustomUserSerializer, FollowSerializer,
                          RecipeListSerializer, RecipeSerializer,
-                         ShoppingListSerializer, TagSerializer,
+                         ShoppingCartSerializer, TagSerializer,
                          LightRecipeSerializer)
 
 
@@ -32,7 +32,8 @@ class CustomUserViewSet(UserViewSet):
 
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
+    pagination_class = CustomPageNumberPagination
 
 
 class FollowViewSet(APIView):
@@ -120,8 +121,8 @@ class RecipeViewSet(ModelViewSet):
     filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
@@ -145,11 +146,11 @@ class RecipeViewSet(ModelViewSet):
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated],
     )
-    def shopping_list(self, request, pk):
+    def shopping_cart(self, request, pk):
         if request.method == 'POST':
-            return self.add_to(ShoppingList, request.user, pk)
+            return self.add_to(ShoppingCart, request.user, pk)
 
-        return self.delete_from(ShoppingList, request.user, pk)
+        return self.delete_from(ShoppingCart, request.user, pk)
 
     def add_to(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
@@ -178,32 +179,32 @@ class RecipeViewSet(ModelViewSet):
         detail=False,
         permission_classes=[IsAuthenticated],
     )
-    def download_shopping_list(self, request):
+    def download_shopping_cart(self, request):
         user = request.user
-        if not user.shopping_list.exists():
+        if not user.shopping_cart.exists():
             return Response(status=status.HTTP_400_BAD_REQUEST)
         ingredients = IngredientAmount.objects.filter(
-            recipe__shopping_list__user=request.user
+            recipe__shopping_cart__user=request.user
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit',
         ).annotate(amount=Sum('amount'))
         createdate = datetime.today()
-        shopping_list = (
+        shopping_cart = (
             f'Список покупок для: {user.get_full_name()}\n\n'
             f'Дата: {createdate:%d-%m-%Y}\n\n'
         )
-        shopping_list += '\n'.join(
+        shopping_cart += '\n'.join(
             [
-                f'- {ingredient["ingredient__name "]}'
+                f'- {ingredient["ingredient__name"]}'
                 f'({ingredient["ingredient__measurement_unit"]})'
                 f' - {ingredient["amount"]}'
                 for ingredient in ingredients
             ]
         )
-        shopping_list += f'\n\nFoodgram ({createdate:%Y})'
-        filename = f'{user.username}_shopping_lists.txt'
-        response = HttpResponse(shopping_list, content_type='text/plain')
+        shopping_cart += f'\n\nFoodgram ({createdate:%Y})'
+        filename = f'{user.username}_shopping_carts.txt'
+        response = HttpResponse(shopping_cart, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={filename}'
 
         return response
