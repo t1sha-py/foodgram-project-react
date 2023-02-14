@@ -1,6 +1,7 @@
 import csv
 import json
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from recipes.models import Ingredient
@@ -9,9 +10,10 @@ from recipes.models import Ingredient
 class Command(BaseCommand):
     help = 'Загрузка базы ингредиентов из Json или csv файла'
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **kwargs):
+        data_path = settings.BASE_DIR
         with open(
-                '../data/ingredients.json',
+                f'{data_path}/data/ingredients.json',
                 encoding='utf-8',
         ) as json_file:
             data = json.load(json_file)
@@ -24,7 +26,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Ингредиенты из json загружены!'))
 
         with open(
-                '../data/ingredients.csv',
+                f'{data_path}/data/ingredients.csv',
                 encoding='utf-8',
         ) as csv_file:
             reader = csv.reader(csv_file)

@@ -6,9 +6,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly,
                                         SAFE_METHODS)
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,11 +19,10 @@ from .permissions import IsAuthorOrSuperUser
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
-from .serializers import (IngredientSerializer, FavoriteSerializer,
-                         CustomUserSerializer, FollowSerializer,
-                         RecipeListSerializer, RecipeSerializer,
-                         ShoppingCartSerializer, TagSerializer,
-                         LightRecipeSerializer)
+from .serializers import (IngredientSerializer, CustomUserSerializer,
+                          FollowSerializer, RecipeListSerializer,
+                          RecipeSerializer, TagSerializer,
+                          LightRecipeSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -121,8 +119,8 @@ class RecipeViewSet(ModelViewSet):
     filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
