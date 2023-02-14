@@ -1,4 +1,5 @@
 from django.db import models
+from django.core import validators
 
 from users.models import User
 
@@ -82,7 +83,9 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(
         'Время приготовления',
         default=30,
-        blank=False,
+        validators=(validators.MinValueValidator(
+            1, message='Время приготовления должно быть больше 0!'
+        ),),
     )
     pub_date = models.DateTimeField(
         'Дата публикации',
@@ -109,13 +112,15 @@ class IngredientAmount(models.Model):
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='amount',
-        null=True,
         verbose_name='Ингредиент',
     )
     amount = models.IntegerField(
         'Количество ингредиента',
+        validators=(validators.MinValueValidator(
+            1, message='Количество ингредиентов не может быть пустым!'
+        ),),
     )
 
     class Meta:
