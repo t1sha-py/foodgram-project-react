@@ -102,7 +102,7 @@ DJOSER = {
 
     'PERMISSIONS': {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        'user_list': ['djoser.permissions.AllowAny'],
+        'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
     },
     'HIDE_USERS': False,
 }
