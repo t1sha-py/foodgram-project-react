@@ -23,5 +23,5 @@
 `sudo docker-compose exec -T backend python manage.py load_data`
 - Создайте теги
 `sudo docker-compose exec -T backend python manage.py load_tags`
-- Для доступа к админке не забудьте создать суперюзера
+- Для доступа к админке не забудьте создать суперюзера!
 `$ docker-compose exec backend python manage.py createsuperuser`
