@@ -14,10 +14,14 @@
 - Из папки `infra/` соберите образ при помощи docker-compose
 `$ docker-compose up -d --build`
 - Создайте миграции
-`$ docker-compose exec web python manage.py makemigrations`
+`$ docker-compose exec backend python manage.py makemigrations`
 - Примените миграции
-`$ docker-compose exec web python manage.py migrate`
+`$ docker-compose exec backend python manage.py migrate`
 - Соберите статику
-`$ docker-compose exec web python manage.py collectstatic --no-input`
+`$ docker-compose exec backend python manage.py collectstatic --no-input`
+- Загрузите ингредиенты
+`sudo docker-compose exec -T backend python manage.py load_data`
+- Создайте теги
+`sudo docker-compose exec -T backend python manage.py load_tags`
 - Для доступа к админке не забудьте создать суперюзера
-`$ docker-compose exec web python manage.py createsuperuser`
+`$ docker-compose exec backend python manage.py createsuperuser`
