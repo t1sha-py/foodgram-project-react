@@ -231,7 +231,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             amount = ingredient['amount']
             if amount < 1:
                 raise serializers.ValidationError(
-                    {'amount': 'Количество ингредиентов не может быть пустым!'}
+                    {'amount': 'Ингредиентов не может быть меньше 1!'}
                 )
 
         tags = data['tags']

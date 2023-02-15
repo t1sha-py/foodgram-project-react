@@ -119,7 +119,7 @@ class IngredientAmount(models.Model):
     amount = models.IntegerField(
         'Количество ингредиента',
         validators=(validators.MinValueValidator(
-            1, message='Количество ингредиентов не может быть пустым!'
+            1, message='Ингредиентов не может быть меньше 1!'
         ),),
     )
 
