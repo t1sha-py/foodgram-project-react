@@ -1,4 +1,8 @@
-# Foodgram - социальная сеть о кулинарии
+# Foodgram - Продуктовый помощник
+
+## Описание проекта
+
+В этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 # Локальная установка в Docker
 
@@ -25,3 +29,9 @@
 `sudo docker-compose exec -T backend python manage.py load_tags`
 - Для доступа к админке не забудьте создать суперюзера!
 `$ docker-compose exec backend python manage.py createsuperuser`
+
+## Авторы:
+- [Максим Тихонов](https://github.com/t1sha-py) Бэкенд и деплой
+- [Яндекс.Практикум](https://github.com/yandex-praktikum) Фронтенд
+
+![workflow](https://github.com/t1sha-py/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
