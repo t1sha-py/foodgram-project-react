@@ -33,7 +33,7 @@
 `$ docker-compose exec backend python manage.py createsuperuser`
 
 ## Авторы:
-- [Максим Тихонов](https://github.com/t1sha-py) Бэкенд и деплой.
-- [Яндекс.Практикум](https://github.com/yandex-praktikum) Фронтенд.
+- [Максим Тихонов](https://github.com/t1sha-py) Бэкенд и деплой
+- [Яндекс.Практикум](https://github.com/yandex-praktikum) Фронтенд
 
 ![workflow](https://github.com/t1sha-py/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
