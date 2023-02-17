@@ -32,6 +32,10 @@
 - Для доступа к админке не забудьте создать суперюзера!
 `$ docker-compose exec backend python manage.py createsuperuser`
 
+Superuser: admin@test.com
+
+Pass: Qq123123!
+
 ## Авторы:
 - [Максим Тихонов](https://github.com/t1sha-py) Бэкенд и деплой.
 - [Яндекс.Практикум](https://github.com/yandex-praktikum) Фронтенд.
