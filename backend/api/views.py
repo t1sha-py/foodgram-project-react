@@ -40,7 +40,7 @@ class FollowViewSet(APIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = CustomPageNumberPagination
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         user_id = self.kwargs.get('user_id')
         if user_id == request.user.id:
             return Response(
@@ -65,7 +65,7 @@ class FollowViewSet(APIView):
             status=status.HTTP_201_CREATED,
         )
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
         user_id = self.kwargs.get('user_id')
         get_object_or_404(User, id=user_id)
         subscription = Follow.objects.filter(
